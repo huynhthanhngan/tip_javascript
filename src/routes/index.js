@@ -2,6 +2,8 @@
 
 const express = require('express')
 const { apiKey, permission } = require('../auth/checkAuth,js')
+const { asyncHandler } = require('../auth/checkAuth ')
+const accessController = require('../controllers/access.controller')
 const router = express.Router()
 
 router.use(apiKey)
@@ -12,5 +14,5 @@ router.use('/v1/api', require('./access'))
 //         message: 'Welcome Fantipjs!'
 //     })
 // })
-
+router.post('/shop/signup', asyncHandler(accessController.signUp))
 module.exports = router
