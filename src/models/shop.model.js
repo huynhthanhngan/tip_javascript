@@ -2,7 +2,7 @@
 
 //!dmbg
 const {model, Schema, Types} = require('mongoose')
-const DOCUMENT_NAME = 'Shop'
+const DOCUMENT_SHOP = 'Shop'
 const COLECTION_NAME = 'Shops'
 
 const mongoose = require('mongoose'); // Erase if already required
@@ -42,4 +42,4 @@ const shopSchema = new Schema({
 });
 
 //Export the model
-module.exports = model(DOCUMENT_NAME, shopSchema);
+module.exports = mongoose.model(DOCCUMENT_NAME, shopSchema);

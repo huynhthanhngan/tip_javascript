@@ -42,6 +42,5 @@ app.use((error, req, res, next) => {
     code: statusCode,
     message: error.message || 'Internal Server Error'
   })
- return 
 })
 module.exports = app
