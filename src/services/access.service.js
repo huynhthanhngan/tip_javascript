@@ -40,11 +40,12 @@ class AccessService{
         const publicKey = crypto.randomBytes(64).toString('hex')
 
         //4 generate tokens
-        const tokens = await createKeyTokenPair({userId: shop._id, email}, publicKeyString, privateKey)
+        const { _id: userId } = foundShop
+        const tokens = await createKeyTokenPair({userId: foundShop._id, email}, publicKey, privateKey)
 
         await KeyTokenService.createKeyToken ({
             refreshToken: tokens.refeshToken,
-            privateKey, publicKey
+            privateKey, publicKey, userId,
 
         })
         return {

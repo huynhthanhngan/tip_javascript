@@ -7,8 +7,8 @@ const { OK, CREATED, SuccessResponse } = require('../core/success.response')
 class AccessController {
   login = async (req, res, next) => {
     new SuccessResponse({
-      
-    })
+      metadata: await AccessService.login( req.body)
+    }).send(res);
   }
   signUp = async ( req, res, next) => {
     // try {
@@ -20,7 +20,7 @@ class AccessController {
         limit: 10
       }
     }).send(res)
-      return res.status(201).json(await AccessService.signUp(req.body))
+      // return res.status(201).json(await AccessService.signUp(req.body))
     // } catch (error) {
     //   next(error)
     // }
