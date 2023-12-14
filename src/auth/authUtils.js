@@ -10,7 +10,7 @@ const createKeyTokenPair = async ( payload, publicKey, privateKey ) => {
             expiresIn: '2 days'
         })
 
-        const refesToken = await JWT.sign( payload, privateKey, {
+        const refeshToken = await JWT.sign( payload, privateKey, {
             algorithm: 'RS256',
             expiresIn: '7 days'
         })
@@ -24,7 +24,7 @@ const createKeyTokenPair = async ( payload, publicKey, privateKey ) => {
                 console.log(`decode verify::`, decode)
             }
         })
-        return{ accessToken, refesToken}
+        return{ accessToken, refeshToken}
     } catch(error) {
 
     }

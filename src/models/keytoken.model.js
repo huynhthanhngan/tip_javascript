@@ -16,8 +16,12 @@ var keyTokenSchema = new Schema({
         type: String,
         required:true,
     },
-    refreshToken:{
-        type: Array, default: []
+    refreshTokenUsed:{
+        type: Array, default: [] //nhung RF token da duoc su dung
+    }, 
+    refreshToken: {
+        collection: COLECTION_NAME,
+        timestamps: true
     }
 }, {
         collection: COLECTION_NAME,

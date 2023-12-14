@@ -3,7 +3,7 @@
 const shopModel = require("../models/shop.model")
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
-const keyTokenService = require("./keyToken.service")
+const KeyTokenService = require("./keyToken.service")
 const { createKeyTokenPair } = require("../auth/authUtils")
 const { getInfoData } = require("../utils")
 const { BadRequestError, ConflictRequestError, AuthFailureError} = require("../core/error.response")
@@ -41,13 +41,16 @@ class AccessService{
 
         //4 generate tokens
         const tokens = await createKeyTokenPair({userId: shop._id, email}, publicKeyString, privateKey)
-        return{
-            code: 201,
-            metadata: {
-                shop: getInfoData({ fileds: ['_id', 'name', 'email'], object: newShop}), 
-                tokens
-            }
-        }  
+
+        await KeyTokenService.createKeyToken ({
+            refreshToken: tokens.refeshToken,
+            privateKey, publicKey
+
+        })
+        return {
+            shop: getInfoData({ fileds: ['_id', 'name', 'email'], object: foundShop}), 
+            tokens
+        }
     }
     static signUp = async ({name, email, password}) => {
         try{
@@ -83,7 +86,7 @@ class AccessService{
 
                 console.log({privateKey, publicKey}) // save collection KeyStore 
 
-                const publicKeyString = await keyTokenService.createKeyToken({
+                const publicKeyString = await KeyTokenService.createKeyToken({
                     userId: newShop._id,
                     publicKey
                 })
