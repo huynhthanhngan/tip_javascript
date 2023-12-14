@@ -6,7 +6,7 @@ const crypto = require('crypto')
 const KeyTokenService = require("./keyToken.service")
 const { createKeyTokenPair } = require("../auth/authUtils")
 const { getInfoData } = require("../utils")
-const { BadRequestError, ConflictRequestError, AuthFailureError} = require("../core/error.response")
+const { BadRequestError, ConflictRequestError, AuthFailureError, ForbiddenError} = require("../core/error.response")
 const { findByEmail } = require("./shop.service")
 
 const RoleShop = {
@@ -18,7 +18,22 @@ const RoleShop = {
 
 class AccessService{
 
-    static logout = async({ keyStore }) => {
+    //check this token used
+    static handleRefreshToken = async (refeshToken) => {
+        const foundToken = await KeyTokenService.findByRefreshTokenUsed(refeshToken)
+        if(foundToken) {
+            const { userId, email} = await verifyJWT(refeshToken, foundToken.privateKey)
+            console.log({userId, email})
+
+            await KeyTokenService.deleteKeyById(userId)
+            throw new ForbiddenError('Something went wrong! please try again')
+        }
+
+        const holderToken = await KeyTokenService.findByRefreshToken({ refreshToken})
+        if(!holderToken) throw new AuthFailureError('Shop not registered')
+    }
+
+    static logout = async( keyStore) => {
         const delKey = await KeyTokenService.removeKeyById(keyStore._id)
         console.log(delKey)
         return delKey
