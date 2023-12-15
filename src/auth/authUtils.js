@@ -82,6 +82,7 @@ const authenticationV2 = asyncHandler( async ( req, res, next) => {
             req.keyStore = keyStore
             req.user = decodeUser
             req.refreshToken = refeshToken
+            return (next)
         } catch (error) {
             throw error
         }
@@ -103,5 +104,5 @@ const verifyJWT = async ( token, keySecret) => {
     return await JWT.verify(token, keySecret)
 }
 module.exports = {
-    createKeyTokenPair, authentication, verifyJWT
+    createKeyTokenPair, authentication, verifyJWT, authenticationV2
 }
