@@ -8,9 +8,9 @@ const { authentication } = require('../../auth/authUtils')
 
 router.post('/shop/signup', asyncHandler(accessController.signUp))
 router.post('/shop/login', asyncHandler(accessController.login))
-
+router.use(authentication)
+router.post('/shop/logout', asyncHandler(accessController.logout))
 ///authentication
-
-router.post('/shop/handlerRefreshToken', accessController.logout)
+router.post('/shop/handlerRefreshToken',asyncHandler(accessController.handlerRefreshToken))
 
 module.exports = router

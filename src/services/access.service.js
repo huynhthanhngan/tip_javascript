@@ -19,18 +19,41 @@ const RoleShop = {
 class AccessService{
 
     //check this token used
-    static handleRefreshToken = async (refeshToken) => {
-        const foundToken = await KeyTokenService.findByRefreshTokenUsed(refeshToken)
+    static handleRefreshToken = async (refreshToken) => {
+        const foundToken = await KeyTokenService.findByRefreshTokenUsed(refreshToken)
         if(foundToken) {
-            const { userId, email} = await verifyJWT(refeshToken, foundToken.privateKey)
+            const { userId, email} = await verifyJWT(refreshToken, foundToken.privateKey)
             console.log({userId, email})
 
             await KeyTokenService.deleteKeyById(userId)
             throw new ForbiddenError('Something went wrong! please try again')
         }
 
-        const holderToken = await KeyTokenService.findByRefreshToken({ refreshToken})
+        const holderToken = await KeyTokenService.findByRefreshToken( refreshToken)
         if(!holderToken) throw new AuthFailureError('Shop not registered')
+
+        const { userId, email } = await verifyJWT( refreshToken, holderToken.privateKey)
+        //check yserid
+        const foundShop = await findByEmail(email)
+        if(!foundShop) throw new AuthFailureError('Shop not registered')
+
+        //create 1 cap moi
+        const tokens = await createKeyTokenPair({ userId, email}, holderToken.publicKey, holderToken.privateKey)
+
+        //updatetoken
+        await holderToken.updated({
+            $set: {
+                refreshToken: tokens.refeshToken
+            },
+            $addToSet: {
+                refreshTokensUsed: refreshToken
+            }
+        })
+
+        return {
+            user: { userId, email},
+            tokens
+        }
     }
 
     static logout = async( keyStore) => {
