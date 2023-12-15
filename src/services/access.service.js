@@ -6,7 +6,7 @@ const crypto = require('crypto')
 const KeyTokenService = require("./keyToken.service")
 const { createKeyTokenPair } = require("../auth/authUtils")
 const { getInfoData } = require("../utils")
-const { BadRequestError, ConflictRequestError, AuthFailureError, ForbiddenError} = require("../core/error.response")
+const { BadRequestError, ConflictRequestError, AuthFailureError, ForbiddenError, AuthFailureError} = require("../core/error.response")
 const { findByEmail } = require("./shop.service")
 
 const RoleShop = {
@@ -17,6 +17,36 @@ const RoleShop = {
 }
 
 class AccessService{
+
+    static handleRefreshTokenV2 = async ({keyStore, user, refreshToken}) => {
+        const { userId, email} = user;
+
+        if(keyStore.refreshTokensUsed.includes(refreshToken)) {
+            await KeyTokenService.deleteKeyById(userId)
+            throw new ForbiddenError('sth wrong happen')
+        }
+
+        if (keyStore.refreshToken !== refreshToken) throw new AuthFailureError('Shop not registeted')
+        //check yserid
+        const foundShop = await findByEmail({email})
+        if(!foundShop) throw new AuthFailureError('Shop not registered')
+
+        //create 1 cap moi
+        const tokens = await createKeyTokenPair({ userId, email}, keyStore.publicKey, keyStore.privateKey)
+
+        //updatetoken
+        await holderToken.updated({
+            $set: {
+                refreshToken: tokens.refeshToken
+            },
+            $addToSet: {
+                refreshTokensUsed: refreshToken
+            }
+        })
+        return {
+            user, tokens
+        }
+    }
 
     //check this token used
     static handleRefreshToken = async (refreshToken) => {
@@ -34,7 +64,7 @@ class AccessService{
 
         const { userId, email } = await verifyJWT( refreshToken, holderToken.privateKey)
         //check yserid
-        const foundShop = await findByEmail(email)
+        const foundShop = await findByEmail({email})
         if(!foundShop) throw new AuthFailureError('Shop not registered')
 
         //create 1 cap moi
@@ -49,7 +79,6 @@ class AccessService{
                 refreshTokensUsed: refreshToken
             }
         })
-
         return {
             user: { userId, email},
             tokens
