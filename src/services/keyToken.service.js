@@ -38,7 +38,7 @@ class KeyTokenService{
     }
 
     static findByRefreshTokenUsed = async ({ refreshToken}) => {
-        return await keytokenModel.findOne({refreshTokensUsed : refreshToken}).lean()
+        return await keytokenModel.findOne({refreshTokensUsed : refreshToken})
     }
 
     static findByRefreshToken = async ({ refreshToken}) => {

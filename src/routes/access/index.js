@@ -10,6 +10,6 @@ router.post('/shop/login', accessController.login)
 
 ///authentication
 
-router.post('/shop/authentication', accessController.logout)
+router.post('/shop/handlerRefreshToken', accessController.logout)
 
 module.exports = router
