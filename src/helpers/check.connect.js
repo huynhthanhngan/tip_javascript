@@ -30,5 +30,6 @@ const checkOverLoad = () => {
   }, _SECONDS)
 }
 module.exports = {
-  countConect
+  countConect,
+  checkOverLoad
 }

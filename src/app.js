@@ -6,8 +6,8 @@ const { default: helmet} = require('helmet')
 
 //init db
 require('./dbs/init.mongodb')
-const {checkOverload} = require('./helpers/check.connect')
-checkOverload()
+const {checkOverLoad} = require('./helpers/check.connect')
+checkOverLoad()
 app.use(morgan("dev"))
 app.use(helmet())
 app.use(compression())

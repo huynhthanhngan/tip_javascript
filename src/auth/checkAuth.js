@@ -47,5 +47,5 @@ const permission = ( permission) => {
 
 
 module.exports = {
-  apiKey, permission, asyncHandler
+  apiKey, permission, 
 }
