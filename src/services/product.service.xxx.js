@@ -76,7 +76,12 @@ class Product {
 
   //create new product
   async createProduct( product_id){
-    return await product.create({...this, _id: product_id})
+    const newProduct = await product.create({...this, _id: product_id})
+    if(newProduct) {
+      await insertInvetory({
+        productId: newProduct._id
+      })
+    }
   }
 
   // update Product 
